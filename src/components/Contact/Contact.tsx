@@ -12,22 +12,31 @@ export const Contact = () => {
     const formData = new FormData(form);
     
     try {
+      setStatus('sending');
       const response = await fetch("https://formsubmit.co/ajax/viktor.rudi.wolf@gmail.com", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(Object.fromEntries(formData))
+        body: JSON.stringify({
+          ...Object.fromEntries(formData),
+          _captcha: true,
+          _template: 'table'
+        })
       });
+      
+      const data = await response.json();
       
       if (response.ok) {
         setStatus('success');
         form.reset();
       } else {
+        console.error('Form submission error:', data);
         setStatus('error');
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       setStatus('error');
     }
   };
@@ -90,6 +99,9 @@ export const Contact = () => {
               )}
               {status === 'error' && (
                 <p className="text-red-600 text-center">{t('contact.error')}</p>
+              )}
+              {status === 'sending' && (
+                <p className="text-blue-600 text-center">{t('contact.sending')}</p>
               )}
             </form>
           </div>
