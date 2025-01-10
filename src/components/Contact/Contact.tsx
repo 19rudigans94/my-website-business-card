@@ -1,45 +1,10 @@
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export const Contact = () => {
   const { t } = useTranslation();
   const [status, setStatus] = useState('');
-  
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    
-    try {
-      setStatus('sending');
-      const response = await fetch("https://formsubmit.co/viktor.rudi.wolf@gmail.com", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          ...Object.fromEntries(formData),
-          _captcha: true,
-          _template: 'table'
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setStatus('success');
-        form.reset();
-      } else {
-        console.error('Form submission error:', data);
-        setStatus('error');
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      setStatus('error');
-    }
-  };
 
   return (
     <section id="contact" className="py-20 bg-gray-50">
@@ -66,7 +31,20 @@ export const Contact = () => {
                 />
               </div>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              action="https://formsubmit.co/viktor.rudi.wolf@gmail.com"
+              method="POST"
+              className="space-y-4"
+            >
+              {/* Honeypot */}
+              <input type="text" name="_honey" style={{ display: 'none' }} />
+              
+              {/* Disable Captcha */}
+              <input type="hidden" name="_captcha" value="false" />
+              
+              {/* Success page */}
+              <input type="hidden" name="_next" value="https://rudiviktor.com?message=success" />
+              
               <input
                 type="text"
                 name="name"
@@ -94,15 +72,6 @@ export const Contact = () => {
               >
                 {t('contact.send')}
               </button>
-              {status === 'success' && (
-                <p className="text-green-600 text-center">{t('contact.success')}</p>
-              )}
-              {status === 'error' && (
-                <p className="text-red-600 text-center">{t('contact.error')}</p>
-              )}
-              {status === 'sending' && (
-                <p className="text-blue-600 text-center">{t('contact.sending')}</p>
-              )}
             </form>
           </div>
         </div>
