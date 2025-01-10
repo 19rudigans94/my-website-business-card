@@ -13,7 +13,7 @@ export const Contact = () => {
     
     try {
       setStatus('sending');
-      const response = await fetch("https://formsubmit.co/ajax/viktor.rudi.wolf@gmail.com", {
+      const response = await fetch("https://formsubmit.co/viktor.rudi.wolf@gmail.com", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
